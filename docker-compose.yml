@@ -1,0 +1,37 @@
+
+
+#services:
+ # web:
+  #  build: .
+   # command: gunicorn pkv_backend.wsgi:application --bind 0.0.0.0:8000 --timeout 120
+    #volumes:
+     # - .:/app
+    #ports:
+     # - "8000:8000"
+    #env_file:
+     # - .env
+
+#volumes:
+ # postgres_data:
+
+services:
+  web:
+    build: .
+    command: gunicorn pkv_backend.wsgi:application --bind 0.0.0.0:8000 --timeout 120 --worker-class gthread --threads 4
+    volumes:
+      - .:/app:delegated,consistent  # 🔥 WICHTIG für macOS
+      - /app/pkv_backend/static  # Vermeidet Sync von statischen Dateien
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      PYTHONUNBUFFERED: 1  # Verhindert Puffer-Probleme
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'  # Reserviert 2 CPU-Kerne
+          memory: 2G    # Reserviert 2GB RAM
+
+volumes:
+  postgres_data:

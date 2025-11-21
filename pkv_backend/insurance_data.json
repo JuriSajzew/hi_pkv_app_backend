@@ -1,0 +1,1219 @@
+[
+  {
+    "name": "ARAG",
+    "tariffs": [
+      {
+        "name": "ME0",
+        "additional_tariffs": []
+      },
+      {
+        "name": "ME300",
+        "additional_tariffs": []
+      },
+      {
+        "name": "ME600",
+        "additional_tariffs": []
+      },
+      {
+        "name": "ME900",
+        "additional_tariffs": []
+      },
+      {
+        "name": "ME1200",
+        "additional_tariffs": []
+      },
+      {
+        "name": "ME1500",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MB0",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MB300",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MB600",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MB900",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MB1200",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MB1500",
+        "additional_tariffs": []
+      },
+      {
+        "name": "K0",
+        "additional_tariffs": []
+      },
+      {
+        "name": "K300",
+        "additional_tariffs": []
+      },
+      {
+        "name": "K600",
+        "additional_tariffs": []
+      },
+      {
+        "name": "K900",
+        "additional_tariffs": []
+      },
+      {
+        "name": "K1200",
+        "additional_tariffs": []
+      },
+      {
+        "name": "K1500",
+        "additional_tariffs": []
+      },
+      {
+        "name": "210",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "209",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "208",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "207",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "205",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "203",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "201",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "200",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "21P70",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "21P80",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      },
+      {
+        "name": "21P90",
+        "additional_tariffs": [
+          {
+            "name": "220"
+          },
+          {
+            "name": "230"
+          },
+          {
+            "name": "240"
+          },
+          {
+            "name": "520"
+          },
+          {
+            "name": "540"
+          },
+          {
+            "name": "529"
+          },
+          {
+            "name": "528"
+          },
+          {
+            "name": "548"
+          },
+          {
+            "name": "549"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "AXA",
+    "tariffs": [
+      {
+        "name": "AktiveMe-U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "EL Bonus-U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "Vital 300-U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "Vital 900-U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "VA6-U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "VA6-900-U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "VA2-U",
+        "additional_tariffs": [
+          {
+            "name": "KGH2-U"
+          }
+        ]
+      },
+      {
+        "name": "VZ600-U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "GesundExtra 1 (GEXTRA1U)",
+        "additional_tariffs": []
+      },
+      {
+        "name": "GesundExtra 2 (GEXTRA2U)",
+        "additional_tariffs": []
+      },
+      {
+        "name": "GesundExtra 3 (GEXTRA3U)",
+        "additional_tariffs": []
+      }
+    ]
+  },
+  {
+    "name": "Allianz",
+    "tariffs": [
+      {
+        "name": "GSB70",
+        "additional_tariffs": [
+          {
+            "name": "GSZ75"
+          },
+          {
+            "name": "GSWO"
+          }
+        ]
+      },
+      {
+        "name": "GSP70",
+        "additional_tariffs": [
+          {
+            "name": "GSZ75"
+          },
+          {
+            "name": "GSWO"
+          }
+        ]
+      },
+      {
+        "name": "AktivMed Best 90 U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "AktivMed Best S U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "AktiMed Plus 90 U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "AktiMed Plus 90 P U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "AktiMed Plus 100 U",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MB100",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MP100",
+        "additional_tariffs": []
+      }
+    ]
+  },
+  {
+    "name": "Alte Oldenburger",
+    "tariffs": [
+      {
+        "name": "A80/100",
+        "additional_tariffs": [
+          {
+            "name": "K20"
+          },
+          {
+            "name": "Z100"
+          },
+          {
+            "name": "80"
+          }
+        ]
+      },
+      {
+        "name": "A90/100",
+        "additional_tariffs": [
+          {
+            "name": "K"
+          },
+          {
+            "name": "S"
+          },
+          {
+            "name": "Z80"
+          },
+          {
+            "name": "60"
+          }
+        ]
+      },
+      {
+        "name": "A106",
+        "additional_tariffs": []
+      },
+      {
+        "name": "A112",
+        "additional_tariffs": []
+      },
+      {
+        "name": "A118",
+        "additional_tariffs": []
+      }
+    ]
+  },
+  {
+    "name": "Barmenia",
+    "tariffs": [
+      {
+        "name": "einsA expert 1",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA expert 2",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA expert 3",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA expert1+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA expert2+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA expert3+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA prima1",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA prima2",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA prima3",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA prima1+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA prima2+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA prima3+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA primex1",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA primex2",
+        "additional_tariffs": []
+      },
+      {
+        "name": "einsA primex3",
+        "additional_tariffs": []
+      },
+      {
+        "name": "VHV1A+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "VHV1C+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "VHV1D+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "VHV1E+",
+        "additional_tariffs": []
+      },
+      {
+        "name": "VZK1A+",
+        "additional_tariffs": [
+          {
+            "name": "VZD1+"
+          }
+        ]
+      },
+      {
+        "name": "VZK1C+",
+        "additional_tariffs": [
+          {
+            "name": "VZD1+"
+          }
+        ]
+      },
+      {
+        "name": "VZK1D+",
+        "additional_tariffs": [
+          {
+            "name": "VZD1+"
+          }
+        ]
+      },
+      {
+        "name": "VZK1E+",
+        "additional_tariffs": [
+          {
+            "name": "VZD1+"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Bayerische Beamtenkrankenkasse (BBKK)",
+    "tariffs": [
+      {
+        "name": "GesundVARIO400",
+        "additional_tariffs": [
+          {
+            "name": "VARIOAmbulant+"
+          },
+          {
+            "name": "VARIOKlink+"
+          },
+          {
+            "name": "VARIOZahn+"
+          }
+        ]
+      },
+      {
+        "name": "GesundVARIO800",
+        "additional_tariffs": [
+          {
+            "name": "VARIOAmbulant+"
+          },
+          {
+            "name": "VARIOKlink+"
+          },
+          {
+            "name": "VARIOZahn+"
+          }
+        ]
+      },
+      {
+        "name": "GesundVARIO1600",
+        "additional_tariffs": [
+          {
+            "name": "VARIOAmbulant+"
+          },
+          {
+            "name": "VARIOKlink+"
+          },
+          {
+            "name": "VARIOZahn+"
+          }
+        ]
+      },
+      {
+        "name": "CompactPRIVAT Start (CP-START) 250A",
+        "additional_tariffs": [
+          {
+            "name": "VitalPLUS"
+          },
+          {
+            "name": "S2"
+          }
+        ]
+      },
+      {
+        "name": "CompactPRIVAT-Start (CP-START) 900A",
+        "additional_tariffs": [
+          {
+            "name": "VitalPLUS"
+          },
+          {
+            "name": "S2"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Concordia",
+    "tariffs": [
+      {
+        "name": "AV1",
+        "additional_tariffs": [
+          {
+            "name": "VV Plus"
+          },
+          {
+            "name": "SV1"
+          },
+          {
+            "name": "SV2"
+          },
+          {
+            "name": "ZV1"
+          }
+        ]
+      },
+      {
+        "name": "AV2",
+        "additional_tariffs": [
+          {
+            "name": "VV Plus"
+          },
+          {
+            "name": "SV1"
+          },
+          {
+            "name": "SV2"
+          },
+          {
+            "name": "ZV1"
+          }
+        ]
+      },
+      {
+        "name": "AV3",
+        "additional_tariffs": [
+          {
+            "name": "VV Plus"
+          },
+          {
+            "name": "SV1"
+          },
+          {
+            "name": "SV2"
+          },
+          {
+            "name": "ZV1"
+          }
+        ]
+      },
+      {
+        "name": "AV4",
+        "additional_tariffs": [
+          {
+            "name": "VV Plus"
+          },
+          {
+            "name": "SV1"
+          },
+          {
+            "name": "SV2"
+          },
+          {
+            "name": "ZV1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Continentale",
+    "tariffs": [
+      {
+        "name": "BUSINESS",
+        "additional_tariffs": [
+          {
+            "name": "SP1"
+          },
+          {
+            "name": "SP2"
+          },
+          {
+            "name": "Option-p"
+          }
+        ]
+      },
+      {
+        "name": "COMFORT-U",
+        "additional_tariffs": [
+          {
+            "name": "SP1"
+          },
+          {
+            "name": "SP2"
+          },
+          {
+            "name": "Option-p"
+          }
+        ]
+      },
+      {
+        "name": "ECONOMY-U",
+        "additional_tariffs": [
+          {
+            "name": "SP1"
+          },
+          {
+            "name": "SP2"
+          },
+          {
+            "name": "Option-p"
+          }
+        ]
+      },
+      {
+        "name": "PREMIUM",
+        "additional_tariffs": [
+          {
+            "name": "SP1"
+          },
+          {
+            "name": "SP2"
+          },
+          {
+            "name": "Option-p"
+          }
+        ]
+      },
+      {
+        "name": "COMFORT-MED",
+        "additional_tariffs": [
+          {
+            "name": "SP1"
+          },
+          {
+            "name": "SP2"
+          },
+          {
+            "name": "Option-p"
+          }
+        ]
+      },
+      {
+        "name": "PREMIUM-MED",
+        "additional_tariffs": [
+          {
+            "name": "SP1"
+          },
+          {
+            "name": "SP2"
+          },
+          {
+            "name": "Option-p"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "DEVK",
+    "tariffs": [
+      {
+        "name": "AM-V0",
+        "additional_tariffs": [
+          {
+            "name": "ST-V2"
+          },
+          {
+            "name": "ST-V3"
+          },
+          {
+            "name": "ZE-V"
+          }
+        ]
+      },
+      {
+        "name": "AM-V1",
+        "additional_tariffs": [
+          {
+            "name": "ST-V2"
+          },
+          {
+            "name": "ST-V3"
+          },
+          {
+            "name": "ZE-V"
+          }
+        ]
+      },
+      {
+        "name": "AM-V2",
+        "additional_tariffs": [
+          {
+            "name": "ST-V2"
+          },
+          {
+            "name": "ST-V3"
+          },
+          {
+            "name": "ZE-V"
+          }
+        ]
+      },
+      {
+        "name": "AM-V3",
+        "additional_tariffs": [
+          {
+            "name": "ST-V2"
+          },
+          {
+            "name": "ST-V3"
+          },
+          {
+            "name": "ZE-V"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Debeka",
+    "tariffs": [
+      {
+        "name": "N",
+        "additional_tariffs": [
+          {
+            "name": "NC"
+          }
+        ]
+      },
+      {
+        "name": "N-SB",
+        "additional_tariffs": [
+          {
+            "name": "NC"
+          }
+        ]
+      },
+      {
+        "name": "NW",
+        "additional_tariffs": [
+          {
+            "name": "NC"
+          }
+        ]
+      },
+      {
+        "name": "NW-SB",
+        "additional_tariffs": [
+          {
+            "name": "NC"
+          }
+        ]
+      },
+      {
+        "name": "Nmed",
+        "additional_tariffs": [
+          {
+            "name": "NC"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Hallesche",
+    "tariffs": [
+      {
+        "name": "KS. Bonus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "KS. 1",
+        "additional_tariffs": []
+      },
+      {
+        "name": "KS.2",
+        "additional_tariffs": []
+      },
+      {
+        "name": "KS.3",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. Bonus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. 1",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK.2",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK.3",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK.4",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select S Bonus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select S 600",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select S 1200",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select S 3000",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select L Bonus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select L 600",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select L 1200",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select L 3000",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select XL Bonus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select XL 600",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select XL 1200",
+        "additional_tariffs": []
+      },
+      {
+        "name": "NK. select XL 3000",
+        "additional_tariffs": []
+      },
+      {
+        "name": "PRIMO.Bonus Z plus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "PRIMO.SB1 Z plus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "PRIMO.SB2 Z plus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "PRIMO.SB3 Z plus",
+        "additional_tariffs": []
+      },
+      {
+        "name": "MAS.",
+        "additional_tariffs": []
+      }
+    ]
+  },
+  {
+    "name": "Signal Iduna (Deutscher Ring)",
+    "tariffs": []
+  },
+  {
+    "name": "Union Krankenversicherung (UKV)",
+    "tariffs": [
+      {
+        "name": "GesundVARIO400",
+        "additional_tariffs": [
+          {
+            "name": "VARIOAmbulant+"
+          },
+          {
+            "name": "VARIOKlink+"
+          },
+          {
+            "name": "VARIOZahn+"
+          }
+        ]
+      },
+      {
+        "name": "GesundVARIO800",
+        "additional_tariffs": [
+          {
+            "name": "VARIOAmbulant+"
+          },
+          {
+            "name": "VARIOKlink+"
+          },
+          {
+            "name": "VARIOZahn+"
+          }
+        ]
+      },
+      {
+        "name": "GesundVARIO1600",
+        "additional_tariffs": [
+          {
+            "name": "VARIOAmbulant+"
+          },
+          {
+            "name": "VARIOKlink+"
+          },
+          {
+            "name": "VARIOZahn+"
+          }
+        ]
+      },
+      {
+        "name": "CompactPRIVAT Start (CP-START) 250A",
+        "additional_tariffs": [
+          {
+            "name": "VitalPLUS"
+          },
+          {
+            "name": "S2"
+          }
+        ]
+      },
+      {
+        "name": "CompactPRIVAT-Start (CP-START) 900A",
+        "additional_tariffs": [
+          {
+            "name": "VitalPLUS"
+          },
+          {
+            "name": "S2"
+          }
+        ]
+      }
+    ]
+  }
+]
