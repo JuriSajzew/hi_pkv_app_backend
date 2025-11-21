@@ -1,37 +1,31 @@
 FROM python:3.11-slim
 
-# Python-Optimierungen für Docker
+# Environment optimizations
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=off
 
 WORKDIR /app
 
-# Getrennte Schritte für besseres Layer-Caching
-COPY requirements.txt .
+# Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc libpq-dev && \
-    pip install --no-cache-dir -U pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    apt-get purge -y gcc && \
-    apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -U pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
 COPY . .
 
-# Statische Dateien getrennt sammeln
-RUN python manage.py collectstatic --noinput
-
+# expose port
 EXPOSE 8000
 
-RUN pip install python-decouple
-
-
-# Gunicorn mit optimierten Einstellungen
+# Production server command (dev uses runserver)
 CMD ["gunicorn", "pkv_backend.wsgi:application", \
      "--bind", "0.0.0.0:8000", \
      "--timeout", "120", \
-     "--workers", "2", \
      "--worker-class", "gthread", \
-     "--threads", "4", \
-     "--log-level", "debug"]
+     "--threads", "4"]
