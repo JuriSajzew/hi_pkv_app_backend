@@ -1,6 +1,6 @@
 services:
   web:
-    build: .
+    image: jurisajzew/pkv_backend:latest
     command: >
       sh -c "
       python manage.py collectstatic --noinput &&

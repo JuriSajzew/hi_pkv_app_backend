@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
 import os
 from urllib.parse import urlparse
 from dotenv import load_dotenv
@@ -32,13 +31,18 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+
+# Static and Media files
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = '/contracts/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'contracts')
 
+# Custom User Model
 AUTH_USER_MODEL = 'users.CustomUser'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Application definition
 INSTALLED_APPS = [
@@ -96,9 +100,6 @@ WSGI_APPLICATION = 'pkv_backend.wsgi.application'
 
 
 # Database
-# Add these at the top of your settings.py
-
-
 # Replace the DATABASES section of your settings.py with this
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
@@ -109,7 +110,6 @@ DATABASES = {
         ssl_require='require' # wichtig für Neon!
     )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -129,7 +129,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -140,12 +139,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -163,15 +156,12 @@ DEFAULT_FROM_EMAIL = "noreply@juridev.de"
 
 # TEST
 # <- Backend, damit der Link direkt dahin zeigt
-FRONTEND_DOMAIN = "http://127.0.0.1:8000/api/users"
+FRONTEND_DOMAIN = os.getenv("FRONTEND_DOMAIN", "")
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Für lokale Entwicklung
 # Später besser: CORS_ALLOWED_ORIGINS = ['http://dein-ip:19006']
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8081",
-    "http://192.168.1.166:19006",  # Expo Go ggf.
-    "http://192.168.1.83:19006",  # Expo Go ggf.
-]
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+
 # Falls du CSRF deaktivieren willst:
-# CSRF_TRUSTED_ORIGINS = ['http://192.168.178.20:8000']
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") 
