@@ -162,7 +162,8 @@ FRONTEND_DOMAIN = os.getenv("FRONTEND_DOMAIN", "")
 
 # Für lokale Entwicklung
 # Später besser: CORS_ALLOWED_ORIGINS = ['http://dein-ip:19006']
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+#CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+CORS_ALLOWED_ORIGINS = [o.strip() for o in os.getenv("CORS_ALLOWED_ORIGINS", "").split(',') if o.strip()]
 
 # Falls du CSRF deaktivieren willst:
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(',') if o.strip()]
