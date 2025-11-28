@@ -168,3 +168,29 @@ CORS_ALLOWED_ORIGINS = [o.strip() for o in os.getenv("CORS_ALLOWED_ORIGINS", "")
 # Falls du CSRF deaktivieren willst:
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(',') if o.strip()]
 #CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") 
+
+# Sicherheitseinstellungen für HTTPS in der Produktion
+
+# 1. Erzwingt HTTPS-Umleitung
+# Nur aktivieren, wenn DEBUG auf False ist (also in Produktion)
+# os.getenv("DJANGO_DEBUG", "False") != "True" stellt sicher, dass dies nur in Prod aktiv ist.
+SECURE_SSL_REDIRECT = os.getenv("DJANGO_DEBUG", "False") != "True"
+
+# 2. Vertrauen dem Hostinger Reverse Proxy
+# Dies ist ENTSCHEIDEND. Es teilt Django mit, den Header 
+# 'HTTP_X_FORWARDED_PROTO' (den der Proxy setzt) zu prüfen. 
+# Wenn dieser 'https' ist, behandelt Django die Verbindung als sicher.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# 3. HSTS (HTTP Strict Transport Security)
+# Weist den Browser an, Ihre Website für die angegebene Zeit (hier 1 Jahr) 
+# NUR über HTTPS aufzurufen. Aktivieren Sie dies nur, wenn Sie sicher sind, 
+# dass Ihr Zertifikat funktioniert!
+SECURE_HSTS_SECONDS = 31536000  # 1 Jahr (86400 = 1 Tag)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# 4. Cookie-Sicherheit
+# Stellt sicher, dass Cookies (wie Sitzungs- und CSRF-Cookies) nur über HTTPS gesendet werden.
+SESSION_COOKIE_SECURE = os.getenv("DJANGO_DEBUG", "False") != "True"
+CSRF_COOKIE_SECURE = os.getenv("DJANGO_DEBUG", "False") != "True"
