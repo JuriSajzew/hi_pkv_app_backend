@@ -5,11 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 from decouple import config
 import requests
 import pprint
+import logging
 
 # 🔑 Voiceflow-Konfiguration
 VOICEFLOW_API_KEY = config("VOICEFLOW_API_KEY")
 VOICEFLOW_VERSION_ID = "production"  # Production = veröffentlichte Version
 
+logger = logging.getLogger(__name__)
 
 class VoiceflowAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -27,9 +29,9 @@ class VoiceflowAPIView(APIView):
             delete_url = f"https://general-runtime.voiceflow.com/state/user/{user_id}"
             try:
                 requests.delete(delete_url, headers={"Authorization": VOICEFLOW_API_KEY})
-                print(f"🧹 Voiceflow session reset for user {user_id}")
+                logger.info(f"🧹 Voiceflow session reset for user {user_id}")
             except requests.RequestException as e:
-                print(f"⚠️ Voiceflow session reset failed: {e}")
+                logger.error(f"⚠️ Voiceflow session reset failed: {e}")
 
         # 📨 API-konformer Payload (laut Voiceflow-Dokumentation)
         if message_type == "launch":
@@ -57,7 +59,7 @@ class VoiceflowAPIView(APIView):
             response = requests.post(url, json=payload, headers=headers)
             response.raise_for_status()
         except requests.RequestException as e:
-            print(f"❌ Voiceflow API Error: {e}")
+            logger.error("❌ Voiceflow API Error", exc_info=True)
             return Response(
                 {"error": f"Voiceflow request failed: {str(e)}"},
                 status=status.HTTP_502_BAD_GATEWAY,
@@ -67,15 +69,15 @@ class VoiceflowAPIView(APIView):
         try:
             traces = response.json()
         except Exception as e:
-            print(f"❌ Invalid JSON response from Voiceflow: {e}")
+            logger.error("❌ Invalid JSON response from Voiceflow", exc_info=True)
             return Response(
                 {"error": "Invalid response from Voiceflow."},
                 status=status.HTTP_502_BAD_GATEWAY,
             )
 
-        print(f"\n=== Voiceflow Raw Traces für User {user_id} ===")
-        pprint.pprint(traces)
-        print("=== Ende Raw Traces ===\n")
+        logger.debug(f"\n=== Voiceflow Raw Traces für User {user_id} ===")
+        logger.debug(pprint.pformat(traces))
+        logger.debug("=== Ende Raw Traces ===\n")
 
         # 💬 Traces verarbeiten
         messages_output = []
@@ -123,7 +125,7 @@ class VoiceflowAPIView(APIView):
 
         # ⚠️ Fallback – falls keine Traces kamen
         if not traces:
-            print(f"⚠️ Keine Traces von Voiceflow für User {user_id}")
+            logger.warning(f"⚠️ Keine Traces von Voiceflow für User {user_id}")
             messages_output.append(
                 "Entschuldige, ich konnte gerade keine Antwort erhalten. Bitte versuche es erneut."
             )

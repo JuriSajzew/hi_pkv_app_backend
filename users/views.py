@@ -101,7 +101,7 @@ class ContactMessageCreateView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        print("Authorization Header:", self.request.headers.get(
+        logger.debug("Authorization Header:", self.request.headers.get(
             "Authorization"))  # Debugging Log
         instance = serializer.save(user=self.request.user)
 
