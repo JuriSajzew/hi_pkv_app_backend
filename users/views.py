@@ -32,7 +32,10 @@ class RegisterView(APIView):
 
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-            verify_url = f"{settings.FRONTEND_DOMAIN}/verify-email/{uid}/{token}"
+            verify_url = (
+                f"{settings.FRONTEND_DOMAIN}"
+                f"/api/users/verify-email/{uid}/{token}/"
+            )
 
             html_message = render_to_string("emails/verify_email.html", {
                 "verify_url": verify_url,
