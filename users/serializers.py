@@ -120,9 +120,9 @@ class PasswordChangeView(APIView):
 class ContactMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactMessage
-        fields = ["id", "user", "first_name",
+        fields = ["id", "first_name",
                   "last_name", "email", "message", "timestamp"]
-        read_only_fields = ["user", "timestamp"]
+        read_only_fields = ["id", "timestamp"]
 
 
 class UserContractSerializer(serializers.ModelSerializer):

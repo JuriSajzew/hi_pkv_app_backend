@@ -14,7 +14,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from rest_framework.generics import CreateAPIView, ListAPIView
 from django.apps import apps
 import pdfplumber
@@ -22,7 +22,10 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import re
-from django.core.mail import EmailMultiAlternatives
+import logging
+from users.services.mail import send_contact_mail
+
+logger = logging.getLogger(__name__)
 
 class RegisterView(APIView):
     def post(self, request):
@@ -32,26 +35,32 @@ class RegisterView(APIView):
 
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-            verify_url = (
-                f"{settings.FRONTEND_DOMAIN}"
-                f"/api/users/verify-email/{uid}/{token}/"
-            )
 
-            html_message = render_to_string("emails/verify_email.html", {
-                "verify_url": verify_url,
-                "user": user,
-            })
+            frontend_domain = getattr(settings, "FRONTEND_DOMAIN", "http://localhost:3000")
 
-            send_mail(
-                subject="Bitte bestätige deine Registrierung",
-                message=f"Klicke hier, um deinen Account zu aktivieren: \n\n{verify_url}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                html_message=html_message,
-            )
+            verify_url =f"{frontend_domain}/api/users/verify-email/{uid}/{token}/"
+
+            try:
+                html_message = render_to_string(
+                    "emails/verify_email.html",
+                    {
+                        "verify_url": verify_url,
+                        "user": user,
+                    },
+                )
+
+                send_mail(
+                    subject="Bitte bestätige deine Registrierung",
+                    message=f"Klicke hier, um deinen Account zu aktivieren: \n\n{verify_url}",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    html_message=html_message,
+                )
+            except Exception as e:
+                # 🔥 extrem wichtig: Container darf NICHT crashen
+                logger.error(f"Registrierungs-Mail konnte nicht gesendet werden: {e}")
 
             return Response({"message": "Bitte bestätige deine E-Mail-Adresse"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(APIView):
@@ -104,17 +113,10 @@ class ContactMessageCreateView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        logger.debug("Authorization Header:", self.request.headers.get(
-            "Authorization"))  # Debugging Log
         instance = serializer.save(user=self.request.user)
+        send_contact_mail(instance)
 
-        # E-Mail versenden
-        send_mail(
-            subject=f"Kontaktanfrage von {instance.first_name} {instance.last_name}",
-            message=instance.message,
-            from_email=instance.email,
-            recipient_list=["jsajzew@googlemail.com"],
-        )
+
 
 # Optional: eigene Nachrichten abrufen
 class ContactMessageListView(ListAPIView):
@@ -136,60 +138,6 @@ class UserDetailView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class PasswordResetRequestView(APIView):
-    def post(self, request):
-        email = request.data.get("email")
-        if not email:
-            return Response({"error": "E-Mail erforderlich."}, status=400)
-        
-        try:
-            user = CustomUser.objects.get(email=email)
-        except CustomUser.DoesNotExist:
-            return Response({"error": "Wenn die E-Mail existiert, wurde eine Nachricht gesendet"}, status=404)
-
-        token = default_token_generator.make_token(user)
-        uid = user.pk
-        reset_link = f"{settings.FRONTEND_DOMAIN}/reset-password/{uid}/{token}"
-
-        # HTML-Template rendern
-        html_content = render_to_string("emails/password_reset_email.html", {
-            "user": user,
-            "reset_link": reset_link,
-            "year": datetime.now().year,
-        })
-        text_content = f"Klicke auf diesen Link, um dein Passwort zurückzusetzen: {reset_link}"
-
-        msg = EmailMultiAlternatives(
-            subject="Passwort zurücksetzen",
-            body=text_content,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[email],
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-
-        return Response({"message": "E-Mail mit Link zum Zurücksetzen wurde gesendet."})
-    
-class PasswordResetConfirmView(APIView):
-    def post(self, request, uid, token):
-        password = request.data.get("password")
-        if not password:
-            return Response({"error": "Passwort erforderlich."}, status=400)
-
-        try:
-            uid = force_str(urlsafe_base64_decode(uid))
-            user = CustomUser.objects.get(pk=uid)
-        except (CustomUser.DoesNotExist, ValueError, TypeError):
-            return Response({"error": "Ungültiger Link oder Benutzer nicht gefunden."}, status=400)
-
-        if not default_token_generator.check_token(user, token):
-            return Response({"error": "Token ungültig oder abgelaufen."}, status=400)
-
-        user.set_password(password)
-        user.save()
-
-        return Response({"message": "Passwort wurde erfolgreich zurückgesetzt."})
     
 class IsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -335,3 +283,86 @@ class MyTariffView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+def get_user_by_email(email):
+    try:
+        return CustomUser.objects.get(email=email)
+    except CustomUser.DoesNotExist:
+        return None
+
+
+def build_reset_link(user):
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    return f"{settings.FRONTEND_DOMAIN}/reset-password/{uidb64}/{token}"
+
+
+def render_reset_email(user, reset_link):
+    html = render_to_string(
+        "emails/password_reset_email.html",
+        {"user": user, "reset_link": reset_link, "year": datetime.now().year},
+    )
+    text = f"Klicke auf diesen Link, um dein Passwort zurückzusetzen: {reset_link}"
+    return text, html
+
+
+def send_reset_email(email, text, html):
+    msg = EmailMultiAlternatives(
+        subject="Passwort zurücksetzen",
+        body=text,
+        from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
+        to=[email],
+    )
+    msg.attach_alternative(html, "text/html")
+    msg.send(fail_silently=False)
+
+
+def get_user_from_uid(uid):
+    try:
+        decoded_uid = force_str(urlsafe_base64_decode(uid))
+        return CustomUser.objects.get(pk=decoded_uid)
+    except (CustomUser.DoesNotExist, ValueError, TypeError):
+        return None
+
+
+def validate_token(user, token):
+    return default_token_generator.check_token(user, token)
+
+
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "E-Mail erforderlich."}, status=400)
+
+        user = get_user_by_email(email)
+        if user:
+            link = build_reset_link(user)
+            text, html = render_reset_email(user, link)
+            send_reset_email(email, text, html)
+
+        return Response(
+            {"message": "Wenn die E-Mail existiert, wurde eine Nachricht gesendet."},
+            status=200,
+        )
+
+
+class PasswordResetConfirmView(APIView):
+    def post(self, request, uid, token):
+        password = request.data.get("password")
+        if not password:
+            return Response({"error": "Passwort erforderlich."}, status=400)
+
+        user = get_user_from_uid(uid)
+        if not user or not validate_token(user, token):
+            return Response(
+                {"error": "Token ungültig oder abgelaufen."},
+                status=400,
+            )
+
+        user.set_password(password)
+        user.save(update_fields=["password"])
+        return Response(
+            {"message": "Passwort wurde erfolgreich zurückgesetzt."},
+            status=200,
+        )

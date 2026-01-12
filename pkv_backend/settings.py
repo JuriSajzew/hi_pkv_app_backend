@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
 CORS_ALLOWED_ORIGINS = [o.strip() for o in os.getenv("CORS_ALLOWED_ORIGINS", "").split(',') if o.strip()]
-#ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 # Static and Media files
 STATIC_URL = '/static/'
@@ -153,7 +153,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_USER_1")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD_1")
-DEFAULT_FROM_EMAIL = "noreply@juridev.de"
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 
 # TEST
 # <- Backend, damit der Link direkt dahin zeigt
@@ -194,3 +194,17 @@ SECURE_HSTS_PRELOAD = True
 # Stellt sicher, dass Cookies (wie Sitzungs- und CSRF-Cookies) nur über HTTPS gesendet werden.
 SESSION_COOKIE_SECURE = os.getenv("DJANGO_DEBUG", "False") != "True"
 CSRF_COOKIE_SECURE = os.getenv("DJANGO_DEBUG", "False") != "True"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}
