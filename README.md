@@ -20,7 +20,6 @@ The backend is designed to be production-ready, secure, and easily extensible.
 - Contact message handling
 - Upload and management of user contract documents (PDF)
 - Static file handling
-- PostgreSQL support
 - PDF parsing and processing
 - NLP / AI-ready infrastructure
 
