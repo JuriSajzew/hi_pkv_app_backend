@@ -1,7 +1,7 @@
 from django.urls import path
 
 from users.serializers import PasswordChangeView
-from .views import CompleteProfileView, InsuranceCompanyListView, InsuranceSelectionView, MyTariffView, TariffListView, VerifyEmailView, RegisterView, ChatbotContractView, ContactMessageCreateView, ContactMessageListView, LogoutView, PasswordResetConfirmView, PasswordResetRequestView, RegisterView, LoginView, UserDetailView
+from .views import CompleteProfileView, InsuranceCompanyListView, InsuranceSelectionView, MyTariffView, TariffListView, VerifyEmailView, RegisterView, ContactMessageCreateView, ContactMessageListView, LogoutView, PasswordResetConfirmView, PasswordResetRequestView, RegisterView, LoginView, UserDetailView
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
@@ -15,7 +15,6 @@ urlpatterns = [
     path('users-detail/', UserDetailView.as_view(), name='user-detail'),
     path("password-reset/", PasswordResetRequestView.as_view(), name="password_reset"),
     path("reset-password/<uid>/<token>/", PasswordResetConfirmView.as_view()),
-    path("chatbot/frage/", ChatbotContractView.as_view(), name='chatbot-frage'),
     path('insurance-companies/', InsuranceCompanyListView.as_view(), name='insurance-companies'),
     path('tariffs/', TariffListView.as_view(), name='tariffs'),
     path('complete-profile/', CompleteProfileView.as_view(), name='complete-profile'),

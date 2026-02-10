@@ -18,29 +18,38 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 from rest_framework.generics import CreateAPIView, ListAPIView
 from django.apps import apps
 import pdfplumber
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-import re
 import logging
 from users.services.mail import send_contact_mail
+from django.shortcuts import render
 
+# Module-level logger for error tracking and operational visibility
 logger = logging.getLogger(__name__)
 
+
 class RegisterView(APIView):
+    """
+    Handles user registration and triggers email verification.
+
+    Creates an inactive user account and sends a verification email
+    containing a tokenized activation link.
+    """
+
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
 
+            # Encode user ID and generate a one-time verification token
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
 
+            # Resolve frontend domain for activation link generation
             frontend_domain = getattr(settings, "FRONTEND_DOMAIN", "http://localhost:3000")
 
-            verify_url =f"{frontend_domain}/api/users/verify-email/{uid}/{token}/"
+            verify_url = f"{frontend_domain}/api/users/verify-email/{uid}/{token}/"
 
             try:
+                # Render HTML email template
                 html_message = render_to_string(
                     "emails/verify_email.html",
                     {
@@ -49,6 +58,7 @@ class RegisterView(APIView):
                     },
                 )
 
+                # Send verification email
                 send_mail(
                     subject="Bitte bestätige deine Registrierung",
                     message=f"Klicke hier, um deinen Account zu aktivieren: \n\n{verify_url}",
@@ -57,164 +67,186 @@ class RegisterView(APIView):
                     html_message=html_message,
                 )
             except Exception as e:
-                # 🔥 extrem wichtig: Container darf NICHT crashen
+                # Email failures must never crash the application container
                 logger.error(f"Registrierungs-Mail konnte nicht gesendet werden: {e}")
 
-            return Response({"message": "Bitte bestätige deine E-Mail-Adresse"}, status=status.HTTP_201_CREATED)
+            return Response(
+                {"message": "Bitte bestätige deine E-Mail-Adresse"},
+                status=status.HTTP_201_CREATED
+            )
 
 
 class LoginView(APIView):
+    """
+    Authenticates a user and issues a token for API access.
+    """
     serializer_class = LoginSerializer
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        # Serializer returns the authenticated user instance
         user = serializer.validated_data
 
+        # Create or reuse authentication token
         token, _ = Token.objects.get_or_create(user=user)
+
+        # Serialize user data for frontend consumption
         user_data = UserSerializer(user).data
 
         return Response({
             "token": token.key,
             "user": user_data
-            })
+        })
 
 
 class LogoutView(APIView):
+    """
+    Invalidates the current authentication token.
+    """
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         request.user.auth_token.delete()
-        return Response({"message": "Logout erfolgreich"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Logout erfolgreich"},
+            status=status.HTTP_200_OK
+        )
 
 
 class VerifyEmailView(APIView):
+    """
+    Activates a user account after successful email verification.
+    """
+
     def get(self, request, uidb64, token):
         try:
+            # Decode user ID from URL-safe base64
             uid = force_str(urlsafe_base64_decode(uidb64))
             User = apps.get_model(settings.AUTH_USER_MODEL)
             user = User.objects.get(pk=uid)
-
         except (User.DoesNotExist, ValueError, TypeError):
             return HttpResponse("Ungültiger Link", status=400)
 
+        # Validate token and activate account
         if default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
             return render(request, "verify_success.html")
         else:
-            return HttpResponse("Der Bestätigungslink ist ungültig oder abgelaufen", status=400)
+            return HttpResponse(
+                "Der Bestätigungslink ist ungültig oder abgelaufen",
+                status=400
+            )
 
 
 class ContactMessageCreateView(CreateAPIView):
+    """
+    Allows authenticated users to submit contact messages.
+    """
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
+        # Attach message to the authenticated user and send notification email
         instance = serializer.save(user=self.request.user)
         send_contact_mail(instance)
 
 
-
-# Optional: eigene Nachrichten abrufen
 class ContactMessageListView(ListAPIView):
+    """
+    Returns all contact messages of the authenticated user.
+    """
     serializer_class = ContactMessageSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return ContactMessage.objects.filter(user=self.request.user).order_by("-timestamp")
+        return ContactMessage.objects.filter(
+            user=self.request.user
+        ).order_by("-timestamp")
+
 
 class UserDetailView(APIView):
+    """
+    Retrieve or update the authenticated user's profile.
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         serializer = UserSerializer(request.user)
-        return Response(serializer.data) 
+        return Response(serializer.data)
+
     def put(self, request):
-        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        serializer = UserSerializer(
+            request.user,
+            data=request.data,
+            partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
 class IsAdmin(permissions.BasePermission):
+    """
+    Custom permission allowing access only to staff users.
+    """
+
     def has_permission(self, request, view):
         return request.user and request.user.is_staff
 
+
 class UserContractUploadView(generics.CreateAPIView):
+    """
+    Allows administrators to upload contract documents for users.
+    """
     queryset = UserContract.objects.all()
     serializer_class = UserContractSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdmin]
 
-class ChatbotContractView(APIView):
-    permission_classes = [IsAuthenticated]
-    model = SentenceTransformer("all-MiniLM-L6-v2")
 
-    def post(self, request):
-        question = request.data.get("question", "").strip()
-        if not question:
-            return Response({"error": "Keine Frage gestellt."}, status=400)
-
-        try:
-            contract = UserContract.objects.get(user=request.user)
-        except UserContract.DoesNotExist:
-            return Response({"error": "Kein Vertrag gefunden."}, status=404)
-
-        # Text extrahieren und in Absätze aufteilen
-        text = contract.text_content or self.extract_text(contract.pdf_file.path)
-        paragraphs = self.split_into_paragraphs(text)  # Hier ändern wir zu Absätzen
-
-        # Embeddings für alle Absätze erstellen
-        paragraph_embeddings = self.model.encode(paragraphs)
-        question_embedding = self.model.encode([question])
-
-        # Ähnlichkeiten berechnen
-        scores = cosine_similarity(question_embedding, paragraph_embeddings)[0]
-        best_idx = np.argmax(scores)
-        best_paragraph = paragraphs[best_idx]
-
-        return Response({"answer": best_paragraph})
-
-    def extract_text(self, path):
-        with pdfplumber.open(path) as pdf:
-            return "\n".join(page.extract_text() or '' for page in pdf.pages)
-
-    def split_into_paragraphs(self, text):
-        """Teilt den Text in logische Absätze auf"""
-        # 1. Trennen an zwei oder mehr Zeilenumbrüchen
-        raw_paragraphs = re.split(r'\n\s*\n+', text)
-        
-        # 2. Bereinigen und leere Absätze entfernen
-        cleaned_paragraphs = []
-        for para in raw_paragraphs:
-            cleaned = " ".join(para.split())  # Überflüssige Leerzeichen entfernen
-            if cleaned:
-                cleaned_paragraphs.append(cleaned)
-        
-        return cleaned_paragraphs
-    
 class InsuranceCompanyListView(generics.ListAPIView):
+    """
+    Returns a list of all insurance companies.
+    """
     queryset = InsuranceCompany.objects.all()
     serializer_class = InsuranceCompanySerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
 class TariffListView(generics.ListAPIView):
+    """
+    Returns tariffs filtered by insurance company and/or tariff type.
+    """
     serializer_class = TariffSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         company_id = self.request.query_params.get('company')
         tariff_type = self.request.query_params.get('type')
+
         queryset = Tariff.objects.all()
+
         if company_id:
             queryset = queryset.filter(company_id=company_id)
+
         if tariff_type:
             queryset = queryset.filter(type=tariff_type)
+
         return queryset
 
+
 class CompleteProfileView(generics.UpdateAPIView):
+    """
+    Completes the insurance profile of the authenticated user.
+    """
     serializer_class = CompleteProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -222,10 +254,11 @@ class CompleteProfileView(generics.UpdateAPIView):
         return self.request.user
 
 
-"""
-Es ist eine Funktion um DAten aus dem Frontent zu empfangen und im Profil des Users zu speichern
-"""
 class InsuranceSelectionView(APIView):
+    """
+    Receives insurance selections from the frontend
+    and persists them in the user's profile.
+    """
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
@@ -237,7 +270,7 @@ class InsuranceSelectionView(APIView):
         tariff_id = data["tariff"]
         additional_ids = data.get("additional_tariffs", [])
 
-        # Prüfen ob die IDs existieren
+        # Validate referenced insurance company and tariff
         try:
             company = InsuranceCompany.objects.get(id=company_id)
             main_tariff = Tariff.objects.get(id=tariff_id, company=company)
@@ -246,10 +279,13 @@ class InsuranceSelectionView(APIView):
         except Tariff.DoesNotExist:
             return Response({"error": "Tariff not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Zusatz-Tarife laden
-        additional_tariffs = Tariff.objects.filter(id__in=additional_ids, company=company)
+        # Load optional add-on tariffs
+        additional_tariffs = Tariff.objects.filter(
+            id__in=additional_ids,
+            company=company
+        )
 
-        # Beispiel: speichern beim User (falls du ein Profilmodell hast)
+        # Persist insurance selection in user profile
         user = request.user
         user.insurance_company = company
         user.tariff = main_tariff
@@ -263,28 +299,41 @@ class InsuranceSelectionView(APIView):
             "tariff": main_tariff.name,
             "additional_tariffs": [t.name for t in additional_tariffs],
         }, status=status.HTTP_200_OK)
-    
+
+
 class MyTariffView(APIView):
+    """
+    Retrieve or update the authenticated user's insurance data.
+    """
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
 
-        # Prüfen, ob Tarifdaten vorhanden sind
+        # Return empty response if insurance data is not yet set
         if not user.insurance_company or not user.tariff:
-            return Response({}, status=200)  # leere Response, wenn noch nicht gesetzt
+            return Response({}, status=200)
 
-        serializer = MyTariffSerializer(user)  # ModelSerializer erwartet Instanz
+        serializer = MyTariffSerializer(user)
         return Response(serializer.data)
 
     def put(self, request):
         user = request.user
-        serializer = MyTariffSerializer(user, data=request.data, partial=True)  # partial=True erlaubt optionale Felder
+        serializer = MyTariffSerializer(
+            user,
+            data=request.data,
+            partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
+
 def get_user_by_email(email):
+    """
+    Retrieve a user by email address.
+    Returns None if the user does not exist.
+    """
     try:
         return CustomUser.objects.get(email=email)
     except CustomUser.DoesNotExist:
@@ -292,12 +341,18 @@ def get_user_by_email(email):
 
 
 def build_reset_link(user):
+    """
+    Generate a secure password reset link for a user.
+    """
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    return f"{settings.FRONTEND_DOMAIN}/reset-password/{uidb64}/{token}"
+    return f"{settings.FRONTEND_DOMAIN}/api/users/reset-password/{uidb64}/{token}"
 
 
 def render_reset_email(user, reset_link):
+    """
+    Render password reset email content (plain text and HTML).
+    """
     html = render_to_string(
         "emails/password_reset_email.html",
         {"user": user, "reset_link": reset_link, "year": datetime.now().year},
@@ -307,6 +362,9 @@ def render_reset_email(user, reset_link):
 
 
 def send_reset_email(email, text, html):
+    """
+    Send password reset email using multipart (text + HTML).
+    """
     msg = EmailMultiAlternatives(
         subject="Passwort zurücksetzen",
         body=text,
@@ -318,6 +376,9 @@ def send_reset_email(email, text, html):
 
 
 def get_user_from_uid(uid):
+    """
+    Resolve a user instance from a base64-encoded UID.
+    """
     try:
         decoded_uid = force_str(urlsafe_base64_decode(uid))
         return CustomUser.objects.get(pk=decoded_uid)
@@ -326,10 +387,16 @@ def get_user_from_uid(uid):
 
 
 def validate_token(user, token):
+    """
+    Validate a password reset token for the given user.
+    """
     return default_token_generator.check_token(user, token)
 
 
 class PasswordResetRequestView(APIView):
+    """
+    Initiates the password reset process.
+    """
     def post(self, request):
         email = request.data.get("email")
         if not email:
@@ -348,21 +415,64 @@ class PasswordResetRequestView(APIView):
 
 
 class PasswordResetConfirmView(APIView):
-    def post(self, request, uid, token):
-        password = request.data.get("password")
-        if not password:
-            return Response({"error": "Passwort erforderlich."}, status=400)
+    """
+    GET: Displays the password reset form.
+    POST: Validates and stores the new password.
+    """
 
+    def get(self, request, uid, token):
         user = get_user_from_uid(uid)
+
         if not user or not validate_token(user, token):
-            return Response(
-                {"error": "Token ungültig oder abgelaufen."},
-                status=400,
+            return render(request, "emails/password_reset_invalid.html")
+
+        return render(request, "emails/password_reset_confirm.html")
+
+    def post(self, request, uid, token):
+        user = get_user_from_uid(uid)
+
+        if not user or not validate_token(user, token):
+            return render(request, "emails/password_reset_invalid.html")
+
+        # Extract password depending on request content type
+        if request.content_type == "application/json":
+            password = request.data.get("password")
+            password_confirm = request.data.get("password_confirm", password)
+        else:
+            password = request.POST.get("password")
+            password_confirm = request.POST.get("password_confirm")
+
+        # Validate password input
+        if not password:
+            return render(
+                request,
+                "emails/password_reset_confirm.html",
+                {"error": "Bitte gib ein Passwort ein."}
             )
 
+        if len(password) < 8:
+            return render(
+                request,
+                "emails/password_reset_confirm.html",
+                {"error": "Das Passwort muss mindestens 8 Zeichen lang sein."}
+            )
+
+        if password != password_confirm:
+            return render(
+                request,
+                "emails/password_reset_confirm.html",
+                {"error": "Die Passwörter stimmen nicht überein."}
+            )
+
+        if user.check_password(password):
+            return render(
+                request,
+                "emails/password_reset_confirm.html",
+                {"error": "Das neue Passwort darf nicht mit dem alten Passwort übereinstimmen."}
+            )
+
+        # Persist new password
         user.set_password(password)
         user.save(update_fields=["password"])
-        return Response(
-            {"message": "Passwort wurde erfolgreich zurückgesetzt."},
-            status=200,
-        )
+
+        return render(request, "emails/password_reset_success.html")
